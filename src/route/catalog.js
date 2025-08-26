@@ -1,17 +1,15 @@
 import express from 'express';
+import { productsCollection } from '../services/mongo.js';
+
 const router = express.Router();
 
-// Catalogo finto
-const products = [
-  { id: 1, name: "Laptop", price: 1200, stock: 10 },
-  { id: 2, name: "Smartphone", price: 800, stock: 25 },
-  { id: 3, name: "Cuffie Wireless", price: 150, stock: 50 },
-  { id: 4, name: "Monitor 27\"", price: 300, stock: 7 }
-];
-
-// GET /catalog → restituisce tutti i prodotti
-router.get('/', (req, res) => {
-  res.json(products);
+router.get('/', async (req, res) => {
+  try {
+    const products = await productsCollection.find({}).toArray();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: 'Errore nel recupero prodotti' });
+  }
 });
 
 export default router;
