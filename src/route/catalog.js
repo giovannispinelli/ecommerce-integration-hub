@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-// Catalogo finto (in futuro lo prenderemo da un DB esterno)
+// Catalogo finto
 const products = [
   { id: 1, name: "Laptop", price: 1200, stock: 10 },
   { id: 2, name: "Smartphone", price: 800, stock: 25 },
@@ -14,4 +14,4 @@ router.get('/', (req, res) => {
   res.json(products);
 });
 
-module.exports = router;
+export default router;
