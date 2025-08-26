@@ -1,15 +1,15 @@
-const express = require('express');
+import express from 'express';
+import catalogRoutes from './routes/catalog.js';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// importa la route catalog
-const catalogRoutes = require('./routes/catalog');
-
+// Route di test
 app.get('/', (req, res) => {
   res.send('Backend e-commerce è online 🚀');
 });
 
-// attiva la route catalog
+// Route catalogo
 app.use('/catalog', catalogRoutes);
 
 app.listen(PORT, () => {
