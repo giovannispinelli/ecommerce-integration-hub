@@ -1,5 +1,5 @@
 import express from 'express';
-import catalogRoutes from './routes/catalog.js';
+import catalogRoutes from './route/catalog.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
