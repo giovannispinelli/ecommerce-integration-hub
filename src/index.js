@@ -1,17 +1,17 @@
-import express from 'express';
-import catalogRoutes from './route/catalog.js';
+import express from "express";
+import catalogRoutes from "./route/catalog.js";
+import orderRoutes from "./route/orders.js";   // 👈 aggiunto
+import { connectToMongo } from "./services/mongo.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-// Route di test
-app.get('/', (req, res) => {
-  res.send('Backend e-commerce è online 🚀');
-});
+// Rotte
+app.use("/catalog", catalogRoutes);
+app.use("/orders", orderRoutes);   // 👈 aggiunto
 
-// Route catalogo
-app.use('/catalog', catalogRoutes);
-
-app.listen(PORT, () => {
-  console.log(`Server in ascolto sulla porta ${PORT}`);
+// Avvio server solo se connesso al DB
+connectToMongo().then(() => {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => console.log(`Server running on port ${port}`));
 });
