@@ -1,7 +1,19 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient } from "mongodb";
 
-const client = new MongoClient(process.env.MONGO_URL);
-await client.connect();
+let db; // variabile per tenere il riferimento al DB
 
-const db = client.db('ecommerce'); // nome del database
-export const productsCollection = db.collection('products');
+export async function connectToMongo() {
+  const client = new MongoClient(process.env.MONGO_URI);
+
+  await client.connect();
+  console.log("✅ Connesso a MongoDB");
+
+  db = client.db("ecommerce"); // nome del DB che hai creato su Atlas
+}
+
+export function getDb() {
+  if (!db) {
+    throw new Error("❌ DB non inizializzato, chiama prima connectToMongo()");
+  }
+  return db;
+}
