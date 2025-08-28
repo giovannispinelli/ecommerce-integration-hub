@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb";
 let db; // variabile per tenere il riferimento al DB
 
 export async function connectToMongo() {
-  const client = new MongoClient(process.env.MONGO_URI);
+  const client = new MongoClient(process.env.MONGO_URL);
 
   await client.connect();
   console.log("✅ Connesso a MongoDB");
