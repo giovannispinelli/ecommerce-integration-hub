@@ -69,7 +69,7 @@ router.patch("/:id", async (req, res) => {
       { returnDocument: "after" }
     );
 
-    if (!result.value) {
+    if (!result) {
       return res.status(404).json({ error: "Ordine non trovato:" + JSON.stringify(result) });
     }
 
