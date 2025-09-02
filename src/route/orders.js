@@ -70,7 +70,7 @@ router.patch("/:id", async (req, res) => {
     );
 
     if (!result.value) {
-      return res.status(404).json({ error: "Ordine non trovato" });
+      return res.status(404).json({ error: "Ordine non trovato"+result });
     }
 
     res.json({ message: "Ordine aggiornato", order: result.value });
