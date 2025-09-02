@@ -50,4 +50,34 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// PATCH /orders/:id -> aggiorna lo stato di un ordine
+router.patch("/:id", async (req, res) => {
+  try {
+    const db = getDb();
+    const { id } = req.params;
+    const { status } = req.body;
+
+    // controlla che sia stato passato uno stato valido
+    const validStatuses = ["CREATED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: "Stato non valido" });
+    }
+
+    const result = await db.collection("orders").findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { status: status } },
+      { returnDocument: "after" }
+    );
+
+    if (!result.value) {
+      return res.status(404).json({ error: "Ordine non trovato" });
+    }
+
+    res.json({ message: "Ordine aggiornato", order: result.value });
+  } catch (error) {
+    console.error("Errore PATCH /orders/:id", error);
+    res.status(500).json({ error: "Errore interno" });
+  }
+});
+
 export default router;
