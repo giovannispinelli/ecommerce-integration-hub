@@ -1,37 +1,52 @@
 import express from "express";
 import { getDb } from "../services/mongo.js";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-// Crea un nuovo ordine
+// POST /orders -> crea un nuovo ordine
 router.post("/", async (req, res) => {
   try {
-    const db = getDb();
-    const orders = db.collection("orders");
+    const db = await getDb();
+    const order = req.body;
 
-    // Estraggo dal body i dati dell'ordine
-    const { customerEmail, items } = req.body;
+    // aggiungo timestamp e stato iniziale
+    order.status = "CREATO";
+    order.createdAt = new Date();
 
-    if (!customerEmail || !items || items.length === 0) {
-      return res.status(400).json({ error: "Dati ordine non validi" });
+    const result = await db.collection("orders").insertOne(order);
+    res.status(201).json({ message: "Ordine creato", id: result.insertedId });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /orders -> lista tutti gli ordini
+router.get("/", async (req, res) => {
+  try {
+    const db = await getDb();
+    const orders = await db.collection("orders").find().toArray();
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// GET /orders/:id -> singolo ordine
+router.get("/:id", async (req, res) => {
+  try {
+    const db = await getDb();
+    const order = await db.collection("orders").findOne({
+      _id: new ObjectId(req.params.id),
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: "Ordine non trovato" });
     }
 
-    // Struttura ordine
-    const newOrder = {
-      customerEmail,
-      items,
-      status: "created", // stato iniziale
-      createdAt: new Date(),
-    };
-
-    // Inserisco in MongoDB
-    const result = await orders.insertOne(newOrder);
-
-    // Ritorno ordine con ID generato
-    res.status(201).json({ orderId: result.insertedId, ...newOrder });
-  } catch (err) {
-    console.error("Errore creazione ordine:", err);
-    res.status(500).json({ error: "Errore server" });
+    res.json(order);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
